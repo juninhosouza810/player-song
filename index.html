@@ -20,7 +20,7 @@
 <script>
   const USUARIO = 'juninhosouza810';
   const REPO    = 'player-song';
-  const BASE    = `https://${USUARIO}.github.io/${REPO}/`;
+  const BASE    = location.origin + '/';
 
   fetch(`https://api.github.com/repos/${USUARIO}/${REPO}/contents/`)
     .then(r => r.json())
