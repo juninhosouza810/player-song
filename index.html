@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Links dos sons</title>
+<style>
+  body { font-family: system-ui, sans-serif; max-width: 700px; margin: 24px auto; padding: 0 16px; }
+  .item { padding: 12px 0; border-bottom: 1px solid #ddd; }
+  .nome { font-weight: 600; margin-bottom: 6px; }
+  .linha { display: flex; gap: 8px; }
+  input { flex: 1; padding: 8px; font-size: 14px; min-width: 0; }
+  button { padding: 8px 12px; }
+</style>
+</head>
+<body>
+<h1>Sons para NFC</h1>
+<div id="lista">Carregando…</div>
+
+<script>
+  const USUARIO = 'juninhosouza810';
+  const REPO    = 'player-song';
+  const BASE    = `https://${USUARIO}.github.io/${REPO}/`;
+
+  fetch(`https://api.github.com/repos/${USUARIO}/${REPO}/contents/`)
+    .then(r => r.json())
+    .then(arquivos => {
+      const lista = document.getElementById('lista');
+      const mp3 = arquivos.filter(a => a.name.toLowerCase().endsWith('.mp3'));
+      lista.innerHTML = mp3.length ? '' : 'Nenhum MP3 encontrado.';
+      mp3.forEach(a => {
+        const link = BASE + encodeURIComponent(a.name);
+        const div = document.createElement('div');
+        div.className = 'item';
+        div.innerHTML = `
+          <div class="nome">${a.name}</div>
+          <div class="linha">
+            <input readonly value="${link}">
+            <button>Copiar</button>
+            <button onclick="new Audio('${link}').play()">▶</button>
+          </div>`;
+        div.querySelector('button').onclick = () => {
+          navigator.clipboard.writeText(link);
+          div.querySelector('button').textContent = 'Copiado!';
+        };
+        lista.appendChild(div);
+      });
+    })
+    .catch(() => document.getElementById('lista').textContent = 'Erro ao listar os sons.');
+</script>
+</body>
+</html>
